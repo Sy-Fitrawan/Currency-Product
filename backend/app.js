@@ -16,11 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // Route Imports
 const user = require("./routes/userRoute")
 const product = require("./routes/productRoute")
-const categories = require("./routes/categoryRoute")
 
 app.use("/api/v1", user)
 app.use("/api/v1", product)
-app.use("/api/v1", categories)
 
 // Middleware for errors
 app.use(errorMiddleware)
