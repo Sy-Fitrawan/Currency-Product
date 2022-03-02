@@ -1,16 +1,18 @@
-import React, { Fragment, useRef, useState } from 'react'
+import React, { Fragment, useRef, useState, useEffect } from 'react'
 import './LoginSignUp.css'
 import { Link } from 'react-router-dom'
 import Loader from '../layout/Loader/Loader'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { login } from '../../actions/userAction'
+import { clearErrors, login, register } from '../../actions/userAction'
+import { useAlert } from 'react-alert'
 
-const LoginSignUp = () => {
+const LoginSignUp = ({ history }) => {
 
     const dispatch = useDispatch()
+    const alert = useAlert()
 
-    const { loading } = useSelector((state) => state.user)
+    const { error, loading, isAuthenticated  } = useSelector((state) => state.user)
 
     const loginTab = useRef(null)
     const registerTab = useRef(null)
@@ -18,10 +20,13 @@ const LoginSignUp = () => {
 
     const [loginNik, setLoginNik] = useState("")
     const [loginPassword, setLoginPassword] = useState("")
-    const [signUpName, setSignUpName] = useState("")
-    const [signUpNik, setSignUpNik] = useState("")
-    const [signUpEmail, setSignUpEmail] = useState("")
-    const [signUpPassword, setSignUpPassword] = useState("")
+
+    const [user, setUser] = useState({
+        name: "",
+        email: "",
+        nik: "",
+        password: "",
+    })
 
     const loginSubmit = (e) => {
         e.preventDefault()
@@ -30,16 +35,7 @@ const LoginSignUp = () => {
 
     const registerSubmit = (e) => {
         e.preventDefault()
-
-        const myForm = new FormData()
-
-        myForm.set("name", signUpName)
-        myForm.set("nik", signUpNik)
-        myForm.set("email", signUpEmail)
-        myForm.set("password", signUpPassword)
-        // dispatch(register(myForm))
-
-        console.log("Register Form Submited");
+        dispatch(register(user))
     }
 
     const switchTabs = (e, tab) => {
@@ -56,6 +52,16 @@ const LoginSignUp = () => {
             loginTab.current.classList.add("shiftToLeft")
         }
     }
+
+    useEffect(() => {
+        if(error){
+            alert.error(error)
+            dispatch(clearErrors())
+        }
+        if(isAuthenticated){
+            history.push('/product')
+        }
+    }, [dispatch, error, alert, history, isAuthenticated])
 
     return (
         <Fragment>
@@ -75,7 +81,7 @@ const LoginSignUp = () => {
                             <form className="loginForm" ref={loginTab} onSubmit={loginSubmit}>
                                 <div className="loginNik">
                                     <input
-                                        type="text"
+                                        type="number"
                                         placeholder="Nik"
                                         required
                                         value={loginNik}
@@ -99,44 +105,40 @@ const LoginSignUp = () => {
                                 ref={registerTab}
                                 onSubmit={registerSubmit}
                             >
-                                <div className="signUpName">
+                                <div className="name">
                                     <input
                                         type="text"
                                         placeholder="Name"
                                         required
-                                        name="name"
-                                        value={signUpName}
-                                        onChange={(e) => setSignUpName(e.target.value)}
+                                        value={user.name}
+                                        onChange={(e) => setUser({...user, name: e.target.value})}
                                     />
                                 </div>
-                                <div className="signUpNik">
-                                    <input
-                                        type="text"
-                                        placeholder="Nik"
-                                        required
-                                        name="Nik"
-                                        value={signUpNik}
-                                        onChange={(e) => setSignUpNik(e.target.value)}
-                                    />
-                                </div>
-                                <div className="signUpEmail">
+                                <div className="email">
                                     <input
                                         type="email"
                                         placeholder="Email"
                                         required
-                                        name="Email"
-                                        value={signUpEmail}
-                                        onChange={(e) => setSignUpEmail(e.target.value)}
+                                        value={user.email}
+                                        onChange={(e) => setUser({...user, email: e.target.value})}
                                     />
                                 </div>
-                                <div className="signUpPassword">
+                                <div className="nik">
+                                    <input
+                                        type="number"
+                                        placeholder="Nik"
+                                        required
+                                        value={user.nik}
+                                        onChange={(e) => setUser({...user, nik: e.target.value})}
+                                    />
+                                </div>
+                                <div className="password">
                                     <input
                                         type="password"
                                         placeholder="Password"
                                         required
-                                        name="password"
-                                        value={signUpPassword}
-                                        onChange={(e) => setSignUpPassword(e.target.value)}
+                                        value={user.password}
+                                        onChange={(e) => setUser({...user, password: e.target.value})}
                                     />
                                 </div>
                                 <input

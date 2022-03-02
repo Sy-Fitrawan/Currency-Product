@@ -1,0 +1,19 @@
+.speedDial {
+    position: fixed;
+    right: 1vmax;
+    top: 1vmax;
+}
+
+.MuiFab-primary:hover {
+    background-color: transparent !important;
+}
+
+.MuiFab-primary {
+    color: #000 !important;
+    background-color: transparent !important;
+}
+
+.MuiFab-root {
+    width: 40px !important;
+    height: 40px !important;
+}
